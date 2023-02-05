@@ -12,6 +12,10 @@ import { Track } from 'src/track/interfaces/track.interface';
 import { CreateTrackDto } from 'src/track/dto/create-track.dto';
 import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
 
+import { Artist } from 'src/artist/interfaces/artist.interface';
+import { CreateArtistDto } from 'src/artist/dto/create-artist.dto';
+import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
+
 import { StoreInterface } from '../interfaces/store.interface';
 
 @Injectable()
@@ -181,6 +185,81 @@ export class StoreService {
         }
 
         delete store.tracks[id];
+
+        this.storeData$ = of(store);
+      }),
+    );
+  }
+
+  getArtists(): Observable<Artist[]> {
+    return this.storeData$.pipe(map(({ artists }) => Object.values(artists)));
+  }
+
+  getArtist(id: string): Observable<Artist> {
+    return this.storeData$.pipe(map(({ artists }) => artists[id]));
+  }
+
+  createArtist(artist: CreateArtistDto): Observable<Artist> {
+    const id = v4();
+    const createdArtist: Artist = { id, ...artist };
+
+    return this.storeData$.pipe(
+      map((store) => {
+        store.artists[id] = createdArtist;
+
+        this.storeData$ = of(store);
+
+        return createdArtist;
+      }),
+    );
+  }
+
+  updateArtist(id: string, artist: UpdateArtistDto): Observable<Artist> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.artists[id]) {
+          return null;
+        }
+
+        const updatedArtist: Artist = {
+          ...store.artists[id],
+          ...artist,
+        };
+
+        store.artists[id] = updatedArtist;
+
+        this.storeData$ = of(store);
+
+        return updatedArtist;
+      }),
+    );
+  }
+
+  deleteArtist(id: string): Observable<void> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.artists[id]) {
+          throw new HttpException('Artist is not with us', 404);
+        }
+
+        Object.keys(store.tracks).forEach((trackId) => {
+          if (store.tracks[trackId].artistId === id) {
+            store.tracks[trackId].artistId = null;
+          }
+        });
+
+        Object.keys(store.albums).forEach((albumId) => {
+          if (store.albums[albumId].artistId === id) {
+            store.albums[albumId].artistId = null;
+          }
+        });
+
+        const artistInFavsIndex = store.favorites.artists.indexOf(id);
+        if (artistInFavsIndex !== -1) {
+          store.favorites.artists.splice(artistInFavsIndex, 1);
+        }
+
+        delete store.artists[id];
 
         this.storeData$ = of(store);
       }),
