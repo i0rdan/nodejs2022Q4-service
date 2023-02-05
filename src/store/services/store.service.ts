@@ -16,6 +16,10 @@ import { Artist } from 'src/artist/interfaces/artist.interface';
 import { CreateArtistDto } from 'src/artist/dto/create-artist.dto';
 import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
 
+import { Album } from 'src/album/interfaces/album.interface';
+import { CreateAlbumDto } from 'src/album/dto/create-album.dto';
+import { UpdateAlbumDto } from 'src/album/dto/update-album.dto';
+
 import { StoreInterface } from '../interfaces/store.interface';
 
 @Injectable()
@@ -260,6 +264,79 @@ export class StoreService {
         }
 
         delete store.artists[id];
+
+        this.storeData$ = of(store);
+      }),
+    );
+  }
+
+  getAlbums(): Observable<Album[]> {
+    return this.storeData$.pipe(map(({ albums }) => Object.values(albums)));
+  }
+
+  getAlbum(id: string): Observable<Album> {
+    return this.storeData$.pipe(map(({ albums }) => albums[id]));
+  }
+
+  createAlbum(album: CreateAlbumDto): Observable<Album> {
+    const id = v4();
+    const createdAlbum: Album = {
+      id,
+      ...album,
+      artistId: album.artistId ?? null,
+    };
+
+    return this.storeData$.pipe(
+      map((store) => {
+        store.albums[id] = createdAlbum;
+
+        this.storeData$ = of(store);
+
+        return createdAlbum;
+      }),
+    );
+  }
+
+  updateAlbum(id: string, album: UpdateAlbumDto): Observable<Album> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.albums[id]) {
+          return null;
+        }
+
+        const updatedAlbum: Album = {
+          ...store.albums[id],
+          ...album,
+        };
+
+        store.albums[id] = updatedAlbum;
+
+        this.storeData$ = of(store);
+
+        return updatedAlbum;
+      }),
+    );
+  }
+
+  deleteAlbum(id: string): Observable<void> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.albums[id]) {
+          throw new HttpException('Album is not with us', 404);
+        }
+
+        Object.keys(store.tracks).forEach((trackId) => {
+          if (store.tracks[trackId].albumId === id) {
+            store.tracks[trackId].albumId = null;
+          }
+        });
+
+        const albumInFavsIndex = store.favorites.albums.indexOf(id);
+        if (albumInFavsIndex !== -1) {
+          store.favorites.albums.splice(albumInFavsIndex, 1);
+        }
+
+        delete store.albums[id];
 
         this.storeData$ = of(store);
       }),
