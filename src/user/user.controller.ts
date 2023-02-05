@@ -45,7 +45,7 @@ export class UserController {
   updateUserPassword(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body(new ValidationPipe()) body: UpdatePasswordDto,
-  ) {
+  ): Observable<UserWithoutPassword> {
     return this.userService.updateUserPassword(id, body);
   }
 

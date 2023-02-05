@@ -20,7 +20,7 @@ export class UserService {
     return this.storeService.getUser(id).pipe(
       map((user) => {
         if (!Object.keys(user).length) {
-          throw new HttpException('User not found', 404);
+          throw new HttpException('User is not with us', 404);
         }
         return user;
       }),
@@ -38,7 +38,7 @@ export class UserService {
     return this.storeService.updateUserPassword(id, data).pipe(
       map((user) => {
         if (!user) {
-          throw new HttpException('User not found', 404);
+          throw new HttpException('User is not with us', 404);
         }
         return user;
       }),

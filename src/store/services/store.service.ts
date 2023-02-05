@@ -8,6 +8,10 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UpdatePasswordDto } from 'src/user/dto/update-password.dto';
 import { UserWithoutPassword } from 'src/user/interfaces/user-without-password.interface';
 
+import { Track } from 'src/track/interfaces/track.interface';
+import { CreateTrackDto } from 'src/track/dto/create-track.dto';
+import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
+
 import { StoreInterface } from '../interfaces/store.interface';
 
 @Injectable()
@@ -109,6 +113,74 @@ export class StoreService {
         }
 
         delete store.users[id];
+
+        this.storeData$ = of(store);
+      }),
+    );
+  }
+
+  getTracks(): Observable<Track[]> {
+    return this.storeData$.pipe(map(({ tracks }) => Object.values(tracks)));
+  }
+
+  getTrack(id: string): Observable<Track> {
+    return this.storeData$.pipe(map(({ tracks }) => tracks[id]));
+  }
+
+  createTrack(track: CreateTrackDto): Observable<Track> {
+    const id = v4();
+    const createdTrack: Track = {
+      id,
+      ...track,
+      albumId: track.albumId ?? null,
+      artistId: track.artistId ?? null,
+    };
+
+    return this.storeData$.pipe(
+      map((store) => {
+        store.tracks[id] = createdTrack;
+
+        this.storeData$ = of(store);
+
+        return createdTrack;
+      }),
+    );
+  }
+
+  updateTrack(id: string, track: UpdateTrackDto): Observable<Track> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.tracks[id]) {
+          return null;
+        }
+
+        const updatedTrack: Track = {
+          ...store.tracks[id],
+          ...track,
+        };
+
+        store.tracks[id] = updatedTrack;
+
+        this.storeData$ = of(store);
+
+        return updatedTrack;
+      }),
+    );
+  }
+
+  deleteTrack(id: string): Observable<void> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.tracks[id]) {
+          throw new HttpException('Track is not with us', 404);
+        }
+
+        const trackInFavsIndex = store.favorites.tracks.indexOf(id);
+        if (trackInFavsIndex !== -1) {
+          store.favorites.tracks.splice(trackInFavsIndex, 1);
+        }
+
+        delete store.tracks[id];
 
         this.storeData$ = of(store);
       }),
