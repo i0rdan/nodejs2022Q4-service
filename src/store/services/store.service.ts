@@ -20,6 +20,8 @@ import { Album } from 'src/album/interfaces/album.interface';
 import { CreateAlbumDto } from 'src/album/dto/create-album.dto';
 import { UpdateAlbumDto } from 'src/album/dto/update-album.dto';
 
+import { FavoritesRepsonse } from 'src/favorites/interfaces/favorites-response.interface';
+
 import { StoreInterface } from '../interfaces/store.interface';
 
 @Injectable()
@@ -337,6 +339,118 @@ export class StoreService {
         }
 
         delete store.albums[id];
+
+        this.storeData$ = of(store);
+      }),
+    );
+  }
+
+  getFavorites(): Observable<FavoritesRepsonse> {
+    return this.storeData$.pipe(
+      map(({ albums, artists, tracks, favorites }) => ({
+        albums: favorites.albums.map((albumId) => albums[albumId]),
+        tracks: favorites.tracks.map((trackId) => tracks[trackId]),
+        artists: favorites.artists.map((artistId) => artists[artistId]),
+      })),
+    );
+  }
+
+  addTrackToFavorites(id: string): Observable<string> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.tracks[id]) {
+          return null;
+        }
+
+        if (!store.favorites.tracks.includes(id)) {
+          store.favorites.tracks.push(id);
+        }
+
+        this.storeData$ = of(store);
+
+        return 'Track was added';
+      }),
+    );
+  }
+
+  deleteTrackFromFavorites(id: string): Observable<void> {
+    return this.storeData$.pipe(
+      map((store) => {
+        const trackInFavsIndex = store.favorites.tracks.indexOf(id);
+        if (trackInFavsIndex === -1 || !store.tracks[id]) {
+          throw new HttpException('Track is not favorite, or not with us', 404);
+        }
+
+        store.favorites.tracks.splice(trackInFavsIndex, 1);
+
+        this.storeData$ = of(store);
+      }),
+    );
+  }
+
+  addAlbumToFavorites(id: string): Observable<string> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.albums[id]) {
+          return null;
+        }
+
+        if (!store.favorites.albums.includes(id)) {
+          store.favorites.albums.push(id);
+        }
+
+        this.storeData$ = of(store);
+
+        return 'Album was added';
+      }),
+    );
+  }
+
+  deleteAlbumFromFavorites(id: string): Observable<void> {
+    return this.storeData$.pipe(
+      map((store) => {
+        const albumInFavsIndex = store.favorites.albums.indexOf(id);
+        if (albumInFavsIndex === -1 || !store.albums[id]) {
+          throw new HttpException('Album is not favorite, or not with us', 404);
+        }
+
+        store.favorites.albums.splice(albumInFavsIndex, 1);
+
+        this.storeData$ = of(store);
+      }),
+    );
+  }
+
+  addArtistToFavorites(id: string): Observable<string> {
+    return this.storeData$.pipe(
+      map((store) => {
+        if (!store.artists[id]) {
+          return null;
+        }
+
+        if (!store.favorites.artists.includes(id)) {
+          store.favorites.artists.push(id);
+        }
+
+        this.storeData$ = of(store);
+
+        return 'Artist was added';
+      }),
+    );
+  }
+
+  deleteArtistFromFavorites(id: string): Observable<void> {
+    return this.storeData$.pipe(
+      map((store) => {
+        const artistInFavsIndex = store.favorites.artists.indexOf(id);
+        if (artistInFavsIndex === -1 || !store.artists[id]) {
+          throw new HttpException(
+            'Artist is not favorite, or not with us',
+            404,
+          );
+        }
+
+        store.favorites.artists.splice(artistInFavsIndex, 1);
 
         this.storeData$ = of(store);
       }),
