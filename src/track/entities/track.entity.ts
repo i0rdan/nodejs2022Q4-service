@@ -1,4 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+
+import { Album } from 'src/album/entities/album.entity';
+import { Artist } from 'src/artist/entities/artist.entity';
 
 @Entity('tracks')
 export class Track {
@@ -16,4 +20,18 @@ export class Track {
 
   @Column({ nullable: true })
   artistId: string;
+
+  @ManyToOne(() => Album, (a) => a.tracks, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @Exclude()
+  album: Album;
+
+  @ManyToOne(() => Artist, (a) => a.tracks, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @Exclude()
+  artist: Artist;
 }

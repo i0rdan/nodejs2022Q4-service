@@ -1,4 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+import { Artist } from 'src/artist/entities/artist.entity';
+import { Track } from 'src/track/entities/track.entity';
 
 @Entity('albums')
 export class Album {
@@ -13,4 +17,17 @@ export class Album {
 
   @Column({ nullable: true })
   artistId: string;
+
+  @OneToMany(() => Track, (t) => t.album, {
+    cascade: true,
+  })
+  @Exclude()
+  tracks: Track[];
+
+  @ManyToOne(() => Artist, (a) => a.albums, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @Exclude()
+  artist: Artist;
 }
