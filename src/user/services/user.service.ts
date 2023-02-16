@@ -2,24 +2,23 @@ import { Injectable, HttpException } from '@nestjs/common';
 
 import { Observable, map } from 'rxjs';
 
-import { StoreService } from 'src/store/services/store.service';
-
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { UserWithoutPassword } from '../interfaces/user-without-password.interface';
+import { UserDbService } from './user.db.service';
 
 @Injectable()
 export class UserService {
-  constructor(private storeService: StoreService) {}
+  constructor(private userDbService: UserDbService) {}
 
   getUsers(): Observable<UserWithoutPassword[]> {
-    return this.storeService.getUsers();
+    return this.userDbService.getUsers();
   }
 
   getUser(id: string): Observable<UserWithoutPassword> {
-    return this.storeService.getUser(id).pipe(
+    return this.userDbService.getUser(id).pipe(
       map((user) => {
-        if (!Object.keys(user).length) {
+        if (!user) {
           throw new HttpException('User is not with us', 404);
         }
         return user;
@@ -28,14 +27,14 @@ export class UserService {
   }
 
   createUser(data: CreateUserDto): Observable<UserWithoutPassword> {
-    return this.storeService.createUser(data);
+    return this.userDbService.createUser(data);
   }
 
   updateUserPassword(
     id: string,
     data: UpdatePasswordDto,
   ): Observable<UserWithoutPassword> {
-    return this.storeService.updateUserPassword(id, data).pipe(
+    return this.userDbService.updateUserPassword(id, data).pipe(
       map((user) => {
         if (!user) {
           throw new HttpException('User is not with us', 404);
@@ -46,6 +45,6 @@ export class UserService {
   }
 
   deleteUser(id: string): Observable<void> {
-    return this.storeService.deleteUser(id);
+    return this.userDbService.deleteUser(id);
   }
 }
