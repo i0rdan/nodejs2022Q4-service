@@ -2,22 +2,21 @@ import { Injectable, HttpException } from '@nestjs/common';
 
 import { Observable, map } from 'rxjs';
 
-import { StoreService } from 'src/store/services/store.service';
-
 import { Track } from '../interfaces/track.interface';
+import { TrackDbService } from './track.db.service';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
 
 @Injectable()
 export class TrackService {
-  constructor(private storeService: StoreService) {}
+  constructor(private trackDbService: TrackDbService) {}
 
   getTracks(): Observable<Track[]> {
-    return this.storeService.getTracks();
+    return this.trackDbService.getTracks();
   }
 
   getTrack(id: string): Observable<Track> {
-    return this.storeService.getTrack(id).pipe(
+    return this.trackDbService.getTrack(id).pipe(
       map((track) => {
         if (!track) {
           throw new HttpException('Track is not with us', 404);
@@ -28,11 +27,11 @@ export class TrackService {
   }
 
   createTrack(data: CreateTrackDto): Observable<Track> {
-    return this.storeService.createTrack(data);
+    return this.trackDbService.createTrack(data);
   }
 
   updateTrack(id: string, data: UpdateTrackDto): Observable<Track> {
-    return this.storeService.updateTrack(id, data).pipe(
+    return this.trackDbService.updateTrack(id, data).pipe(
       map((track) => {
         if (!track) {
           throw new HttpException('Track is not with us', 404);
@@ -43,6 +42,6 @@ export class TrackService {
   }
 
   deleteTrack(id: string): Observable<void> {
-    return this.storeService.deleteTrack(id);
+    return this.trackDbService.deleteTrack(id);
   }
 }

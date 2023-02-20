@@ -13,7 +13,7 @@ export class Track {
   name: string;
 
   @Column()
-  duration: string;
+  duration: number;
 
   @Column({ nullable: true })
   albumId: string;
