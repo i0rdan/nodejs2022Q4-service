@@ -20,7 +20,7 @@ import { Album } from 'src/album/interfaces/album.interface';
 import { CreateAlbumDto } from 'src/album/dto/create-album.dto';
 import { UpdateAlbumDto } from 'src/album/dto/update-album.dto';
 
-import { FavoritesRepsonse } from 'src/favorites/interfaces/favorites-response.interface';
+import { FavoritesResponse } from 'src/favorites/interfaces/favorites-response.interface';
 
 import { StoreInterface } from '../interfaces/store.interface';
 
@@ -345,7 +345,7 @@ export class StoreService {
     );
   }
 
-  getFavorites(): Observable<FavoritesRepsonse> {
+  getFavorites(): Observable<FavoritesResponse> {
     return this.storeData$.pipe(
       map(({ albums, artists, tracks, favorites }) => ({
         albums: favorites.albums.map((albumId) => albums[albumId]),

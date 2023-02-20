@@ -10,7 +10,7 @@ import {
 
 import { Observable } from 'rxjs';
 
-import { FavoritesRepsonse } from './interfaces/favorites-response.interface';
+import { FavoritesResponse } from './interfaces/favorites-response.interface';
 import { FavoritesService } from './services/favorites.service';
 
 @Controller('favs')
@@ -18,7 +18,7 @@ export class FavoritesController {
   constructor(private favoritesService: FavoritesService) {}
 
   @Get()
-  getFavorites(): Observable<FavoritesRepsonse> {
+  getFavorites(): Observable<FavoritesResponse> {
     return this.favoritesService.getFavorites();
   }
 

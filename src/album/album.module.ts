@@ -10,5 +10,6 @@ import { AlbumDbService } from './services/album.db.service';
   imports: [TypeOrmModule.forFeature([Album])],
   controllers: [AlbumController],
   providers: [AlbumService, AlbumDbService],
+  exports: [AlbumService],
 })
 export class AlbumModule {}

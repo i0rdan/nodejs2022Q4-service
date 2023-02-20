@@ -10,5 +10,6 @@ import { TrackDbService } from './services/track.db.service';
   imports: [TypeOrmModule.forFeature([Track])],
   controllers: [TrackController],
   providers: [TrackService, TrackDbService],
+  exports: [TrackService],
 })
 export class TrackModule {}

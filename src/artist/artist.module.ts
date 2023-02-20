@@ -10,5 +10,6 @@ import { ArtistDbService } from './services/artist.db.service';
   imports: [TypeOrmModule.forFeature([Artist])],
   controllers: [ArtistController],
   providers: [ArtistService, ArtistDbService],
+  exports: [ArtistService],
 })
 export class ArtistModule {}
