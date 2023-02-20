@@ -2,22 +2,21 @@ import { Injectable, HttpException } from '@nestjs/common';
 
 import { Observable, map } from 'rxjs';
 
-import { StoreService } from 'src/store/services/store.service';
-
-import { Album } from '../interfaces/album.interface';
+import { Album } from '../entities/album.entity';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
+import { AlbumDbService } from './album.db.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private storeService: StoreService) {}
+  constructor(private albumDbService: AlbumDbService) {}
 
   getAlbums(): Observable<Album[]> {
-    return this.storeService.getAlbums();
+    return this.albumDbService.getAlbums();
   }
 
   getAlbum(id: string): Observable<Album> {
-    return this.storeService.getAlbum(id).pipe(
+    return this.albumDbService.getAlbum(id).pipe(
       map((album) => {
         if (!album) {
           throw new HttpException('Album is not with us', 404);
@@ -28,11 +27,11 @@ export class AlbumService {
   }
 
   createAlbum(data: CreateAlbumDto): Observable<Album> {
-    return this.storeService.createAlbum(data);
+    return this.albumDbService.createAlbum(data);
   }
 
   updateAlbum(id: string, data: UpdateAlbumDto): Observable<Album> {
-    return this.storeService.updateAlbum(id, data).pipe(
+    return this.albumDbService.updateAlbum(id, data).pipe(
       map((album) => {
         if (!album) {
           throw new HttpException('Album is not with us', 404);
@@ -43,6 +42,6 @@ export class AlbumService {
   }
 
   deleteAlbum(id: string): Observable<void> {
-    return this.storeService.deleteAlbum(id);
+    return this.albumDbService.deleteAlbum(id);
   }
 }
