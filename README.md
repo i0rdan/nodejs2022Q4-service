@@ -1,5 +1,11 @@
 # Home Library Service
 
+## Move to dev-typeorm branch
+
+```
+git checkout dev-typeorm
+```
+
 ## Installing NPM modules
 
 ```
