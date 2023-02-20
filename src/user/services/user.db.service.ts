@@ -1,7 +1,7 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Observable, map, from, switchMap } from 'rxjs';
+import { Observable, map, from, switchMap, of } from 'rxjs';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -53,7 +53,7 @@ export class UserDbService {
     return from(this.userRepo.findOne({ where: { id } })).pipe(
       switchMap((u) => {
         if (!u) {
-          return null;
+          return of(null);
         }
 
         const { password } = u;

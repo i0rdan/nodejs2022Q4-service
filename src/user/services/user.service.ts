@@ -12,7 +12,11 @@ export class UserService {
   constructor(private userDbService: UserDbService) {}
 
   getUsers(): Observable<UserWithoutPassword[]> {
-    return this.userDbService.getUsers();
+    return this.userDbService
+      .getUsers()
+      .pipe(
+        map((users) => users.map((u) => this.transformDateFieldsToNumber(u))),
+      );
   }
 
   getUser(id: string): Observable<UserWithoutPassword> {
@@ -21,13 +25,15 @@ export class UserService {
         if (!user) {
           throw new HttpException('User is not with us', 404);
         }
-        return user;
+        return this.transformDateFieldsToNumber(user);
       }),
     );
   }
 
   createUser(data: CreateUserDto): Observable<UserWithoutPassword> {
-    return this.userDbService.createUser(data);
+    return this.userDbService
+      .createUser(data)
+      .pipe(map((user) => this.transformDateFieldsToNumber(user)));
   }
 
   updateUserPassword(
@@ -39,12 +45,20 @@ export class UserService {
         if (!user) {
           throw new HttpException('User is not with us', 404);
         }
-        return user;
+        return this.transformDateFieldsToNumber(user);
       }),
     );
   }
 
   deleteUser(id: string): Observable<void> {
     return this.userDbService.deleteUser(id);
+  }
+
+  transformDateFieldsToNumber(user: UserWithoutPassword): UserWithoutPassword {
+    return {
+      ...user,
+      createdAt: new Date(user.createdAt).getTime(),
+      updatedAt: new Date(user.updatedAt).getTime(),
+    };
   }
 }
