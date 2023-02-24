@@ -1,9 +1,9 @@
 # Home Library Service
 
-## Move to dev-typeorm branch
+## Move to dev-logging-auth branch
 
 ```
-git checkout dev-typeorm
+git checkout dev-logging-auth
 ```
 
 ## Installing NPM modules
