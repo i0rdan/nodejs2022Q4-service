@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { typeOrmConfig } from 'typeorm.config';
 
+import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TrackModule } from './track/track.module';
 import { AlbumModule } from './album/album.module';
@@ -15,6 +16,7 @@ import { LoggingService } from './shared/services/logging.service';
 
 @Module({
   imports: [
+    AuthModule,
     UserModule,
     TrackModule,
     AlbumModule,

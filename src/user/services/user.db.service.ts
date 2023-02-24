@@ -17,6 +17,10 @@ export class UserDbService {
     private userRepo: Repository<User>,
   ) {}
 
+  getUsersWithPass(): Observable<User[]> {
+    return from(this.userRepo.find());
+  }
+
   getUsers(): Observable<UserWithoutPassword[]> {
     return from(this.userRepo.find()).pipe(
       map((users) => users.map(({ password, ...user }) => user)),
