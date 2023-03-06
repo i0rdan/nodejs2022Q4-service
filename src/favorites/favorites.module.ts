@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PassportModule } from '@nestjs/passport';
 
 import { AlbumModule } from 'src/album/album.module';
 import { TrackModule } from 'src/track/track.module';
@@ -16,6 +17,7 @@ import { FavoritesDbService } from './services/favorites.db.service';
     TrackModule,
     ArtistModule,
     TypeOrmModule.forFeature([Favorites]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [FavoritesController],
   providers: [FavoritesService, FavoritesDbService],

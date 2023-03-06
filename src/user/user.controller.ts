@@ -9,7 +9,9 @@ import {
   HttpCode,
   ValidationPipe,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { Observable } from 'rxjs';
 
@@ -19,6 +21,7 @@ import { UserWithoutPassword } from './interfaces/user-without-password.interfac
 import { UserService } from './services/user.service';
 
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private userService: UserService) {}
 
