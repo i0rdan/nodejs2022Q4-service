@@ -9,7 +9,9 @@ import {
   HttpCode,
   ValidationPipe,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { Observable } from 'rxjs';
 
@@ -19,6 +21,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { AlbumService } from './services/album.service';
 
 @Controller('album')
+@UseGuards(AuthGuard('jwt'))
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
 

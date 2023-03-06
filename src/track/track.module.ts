@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { PassportModule } from '@nestjs/passport';
 
-import { StoreModule } from 'src/store/store.module';
-
-import { TrackService } from './services/track.service';
+import { Track } from './entities/track.entity';
 import { TrackController } from './track.controller';
+import { TrackService } from './services/track.service';
+import { TrackDbService } from './services/track.db.service';
 
 @Module({
-  imports: [StoreModule],
+  imports: [
+    TypeOrmModule.forFeature([Track]),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+  ],
   controllers: [TrackController],
-  providers: [TrackService],
+  providers: [TrackService, TrackDbService],
+  exports: [TrackService],
 })
 export class TrackModule {}

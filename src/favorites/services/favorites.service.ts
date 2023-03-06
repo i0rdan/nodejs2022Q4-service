@@ -2,20 +2,19 @@ import { Injectable, HttpException } from '@nestjs/common';
 
 import { Observable, map } from 'rxjs';
 
-import { StoreService } from 'src/store/services/store.service';
-
-import { FavoritesRepsonse } from '../interfaces/favorites-response.interface';
+import { FavoritesResponse } from '../interfaces/favorites-response.interface';
+import { FavoritesDbService } from './favorites.db.service';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private storeService: StoreService) {}
+  constructor(private favoritesDbService: FavoritesDbService) {}
 
-  getFavorites(): Observable<FavoritesRepsonse> {
-    return this.storeService.getFavorites();
+  getFavorites(): Observable<FavoritesResponse> {
+    return this.favoritesDbService.getFavorites();
   }
 
   addTrackToFavorites(id: string): Observable<string> {
-    return this.storeService.addTrackToFavorites(id).pipe(
+    return this.favoritesDbService.addTrackToFavorites(id).pipe(
       map((message) => {
         if (!message) {
           throw new HttpException('Track is not with us', 422);
@@ -26,11 +25,11 @@ export class FavoritesService {
   }
 
   deleteTrackFromFavorites(id: string): Observable<void> {
-    return this.storeService.deleteTrackFromFavorites(id);
+    return this.favoritesDbService.deleteTrackFromFavorites(id);
   }
 
   addAlbumToFavorites(id: string): Observable<string> {
-    return this.storeService.addAlbumToFavorites(id).pipe(
+    return this.favoritesDbService.addAlbumToFavorites(id).pipe(
       map((message) => {
         if (!message) {
           throw new HttpException('Album is not with us', 422);
@@ -41,14 +40,14 @@ export class FavoritesService {
   }
 
   deleteAlbumFromFavorites(id: string): Observable<void> {
-    return this.storeService.deleteAlbumFromFavorites(id);
+    return this.favoritesDbService.deleteAlbumFromFavorites(id);
   }
 
   addArtistToFavorites(id: string): Observable<string> {
-    return this.storeService.addArtistToFavorites(id).pipe(
+    return this.favoritesDbService.addArtistToFavorites(id).pipe(
       map((message) => {
         if (!message) {
-          throw new HttpException('Arrtist is not with us', 422);
+          throw new HttpException('Artist is not with us', 422);
         }
         return message;
       }),
@@ -56,6 +55,6 @@ export class FavoritesService {
   }
 
   deleteArtistFromFavorites(id: string): Observable<void> {
-    return this.storeService.deleteArtistFromFavorites(id);
+    return this.favoritesDbService.deleteArtistFromFavorites(id);
   }
 }

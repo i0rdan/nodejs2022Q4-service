@@ -9,7 +9,9 @@ import {
   HttpCode,
   ValidationPipe,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { Observable } from 'rxjs';
 
@@ -19,6 +21,7 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { TrackService } from './services/track.service';
 
 @Controller('track')
+@UseGuards(AuthGuard('jwt'))
 export class TrackController {
   constructor(private trackService: TrackService) {}
 

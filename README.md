@@ -1,25 +1,22 @@
 # Home Library Service
 
+## Move to dev-logging-auth branch
+
+```
+git checkout dev-logging-auth
+```
+
 ## Installing NPM modules
 
 ```
 npm install
 ```
 
-## Running application
-
-```
-npm start
-```
-
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-
-## Containerization
+## Running application in docker
 
 Change .env.example into .env file
 
-Build and start in detached mode:
+Build and start in detached mode (this will automatically create container and fill database with tables)
 
 ```
 npm run docker
@@ -30,6 +27,7 @@ Scanning images:
 ```
 npm run docker:scan:db
 npm run docker:scan:api
+```
 
 ## Testing
 

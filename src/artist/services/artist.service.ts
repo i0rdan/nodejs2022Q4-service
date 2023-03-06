@@ -2,22 +2,21 @@ import { Injectable, HttpException } from '@nestjs/common';
 
 import { Observable, map } from 'rxjs';
 
-import { StoreService } from 'src/store/services/store.service';
-
-import { Artist } from '../interfaces/artist.interface';
+import { Artist } from '../entities/artist.entity';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
+import { ArtistDbService } from './artist.db.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(private storeService: StoreService) {}
+  constructor(private artistDbService: ArtistDbService) {}
 
   getArtists(): Observable<Artist[]> {
-    return this.storeService.getArtists();
+    return this.artistDbService.getArtists();
   }
 
   getArtist(id: string): Observable<Artist> {
-    return this.storeService.getArtist(id).pipe(
+    return this.artistDbService.getArtist(id).pipe(
       map((artist) => {
         if (!artist) {
           throw new HttpException('Artist is not with us', 404);
@@ -28,11 +27,11 @@ export class ArtistService {
   }
 
   createArtist(data: CreateArtistDto): Observable<Artist> {
-    return this.storeService.createArtist(data);
+    return this.artistDbService.createArtist(data);
   }
 
   updateArtist(id: string, data: UpdateArtistDto): Observable<Artist> {
-    return this.storeService.updateArtist(id, data).pipe(
+    return this.artistDbService.updateArtist(id, data).pipe(
       map((artist) => {
         if (!artist) {
           throw new HttpException('Artist is not with us', 404);
@@ -43,6 +42,6 @@ export class ArtistService {
   }
 
   deleteArtist(id: string): Observable<void> {
-    return this.storeService.deleteArtist(id);
+    return this.artistDbService.deleteArtist(id);
   }
 }
